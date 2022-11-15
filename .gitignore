@@ -1,0 +1,6 @@
+.sconsign.dblite
+input/
+output/
+scratch/
+*.gz
+Rplots.pdf
