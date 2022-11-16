@@ -12,6 +12,18 @@ The methods are described in more detail in the manuscript:
 > Northcott, Karen Shen, Carrie Yeats. (2022). Occupational models from 42
 > million unstructured job postings.
 
+## License
+
+Copyright 2022 Innovative Policy Lab d/b/a Research Improving People's Lives
+("RIPL"), Providence, RI. All Rights Reserved.
+
+Your use of the Software License along with any related Documentation, Data,
+etc. is governed by the terms and conditions which are available here:
+[LICENSE.md](https://github.com/ripl-org/sockit-data/blob/main/LICENSE.md)
+
+Please contact [connect@ripl.org](mailto:connect@ripl.org) to inquire about
+commercial use.
+
 ## Build Steps
 
 This tool uses the [scons](https://scons.org/) build system. The sequence of
@@ -96,16 +108,6 @@ of Labor Statistics' 2018 SOC code system.
 **us_places.txt (430 records)** – 50 state names, 50 state abbreviations, and
 330 city names for the largest U.S. cities from Wikipedia; used in job title
 filtering.
-
-## License
-
-Copyright 2022 Innovative Policy Lab d/b/a Research Improving People's Lives
-("RIPL"), Providence, RI. All Rights Reserved.
-
-*Sockit* is freely available for non-commercial use under the license provided
-in [LICENSE.md](https://github.com/ripl-org/sockit-data/blob/main/LICENSE.md).
-Please contact [connect@ripl.org](mailto:connect@ripl.org) to inquire about
-commercial use.
 
 ## Contributors
 
