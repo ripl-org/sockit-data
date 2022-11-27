@@ -1,9 +1,11 @@
 import os
+import pandas as pd
 
 env = Environment(ENV=os.environ)
 
 DOI = "10.5281/zenodo.7319953" # DOI of the replication files at Zenodo
 TOP_MATCHES = 3 # Number of matches to consider in validation
+RANDOM_SEED = 167566
 
 # Input files from Zenodo
 env.Command(
@@ -298,4 +300,154 @@ env.Command(
         "scratch/validate_openings.csv"
     ],
     action="Rscript $SOURCES $TARGETS"
+)
+
+
+### PREDICTIVE MODELS ###
+
+# Define outcomes as 1 for SOCs >=0.1 probability
+env.Command(
+    target=[
+        "scratch/prediction/outcome_counts.csv",
+        "scratch/prediction/outcomes.npz"
+    ],
+    source=[
+        "source/prediction/outcomes.py",
+        "input/soc_2018.csv",
+        "input/nlx_soc_job_matrix.npz"
+    ],
+    action="python $SOURCES $TARGETS"
+)
+
+# Define multinomial outcome using the most probable SOC4
+env.Command(
+    target=[
+        "scratch/prediction/outcomes_multinomial.npy"
+    ],
+    source=[
+        "source/prediction/outcomes_multinomial.py",
+        "input/soc_2018.csv",
+        "input/nlx_soc_job_matrix.npz"
+    ],
+    action="python $SOURCES $TARGETS"
+)
+
+# Split into train/validate/test sets
+env.Command(
+    target=[
+        "scratch/prediction/X_train.npz",
+        "scratch/prediction/X_validate.npz",
+        "scratch/prediction/X_test.npz"
+    ],
+    source=[
+        "source/prediction/split.py",
+        "input/nlx_job_skill_matrix.npz",
+        Value(RANDOM_SEED)
+    ],
+    action="python $SOURCES $TARGETS"
+)
+env.Command(
+    target=[
+        "scratch/prediction/y_train.npz",
+        "scratch/prediction/y_validate.npz",
+        "scratch/prediction/y_test.npz"
+    ],
+    source=[
+        "source/prediction/split.py",
+        "scratch/prediction/outcomes.npz",
+        Value(RANDOM_SEED)
+    ],
+    action="python $SOURCES $TARGETS"
+)
+env.Command(
+    target=[
+        "scratch/prediction/ym_train.npy",
+        "scratch/prediction/ym_validate.npy",
+        "scratch/prediction/ym_test.npy"
+    ],
+    source=[
+        "source/prediction/split.py",
+        "scratch/prediction/outcomes_multinomial.npy",
+        Value(RANDOM_SEED)
+    ],
+    action="python $SOURCES $TARGETS"
+)
+
+# Train individual classifiers
+socs = pd.read_csv("source/prediction/soc_2018.csv", index_col="soc_id")
+# Skip SOCs that fail to train
+socs = [
+    (i, soc)
+    for i, soc in socs.soc.items()
+    if soc not in [251069, 251082, 393099, 472053, 475043, 499064, 516092, 536032, 536099, 551012, 551016, 552011, 552012, 553012]
+]
+for i, soc in socs:
+    env.Command(
+        target=[
+            f"scratch/prediction/models/{soc}.txt"
+        ],
+        source=[
+            "source/prediction/train.py",
+            "scratch/prediction/X_train.npz",
+            "scratch/prediction/y_train.npz",
+            "scratch/prediction/X_validate.npz",
+            "scratch/prediction/y_validate.npz",
+            "scratch/prediction/X_test.npz",
+            "scratch/prediction/y_test.npz",
+            "output/sockit/data/skills.csv",
+            Value(RANDOM_SEED),
+            Value(i),
+            Value(soc)
+        ],
+        action="python $SOURCES $TARGETS >${TARGET}.log"
+    )
+
+# AUCs of individual classifiers
+env.Depends(
+    env.Command(
+        target=[
+            f"scratch/prediction/auc.csv"
+        ],
+        source=[
+            "source/prediction/auc.py",
+            "source/prediction/soc_2018.csv"
+        ],
+        action="python $SOURCES $TARGETS"
+    ),
+    [
+        f"scratch/prediction/models/{soc}.txt"
+        for i, soc in socs
+    ]
+)
+
+# AUC plots
+env.Command(
+    target=[
+        "output/plots/prediction_auc.pdf"
+    ],
+    source=[
+        "source/plots/prediction_auc.R",
+        "scratch/prediction/auc.csv"
+    ],
+    action="Rscript $SOURCES $TARGETS"
+)
+
+# Train multinomial classifier
+env.Command(
+    target=[
+        f"scratch/prediction/models/multinomial.txt",
+        "scratch/prediction/soc4.csv"
+    ],
+    source=[
+        "source/prediction/train_multinomial.py",
+        "scratch/prediction/X_train.npz",
+        "scratch/prediction/ym_train.npy",
+        "scratch/prediction/X_validate.npz",
+        "scratch/prediction/ym_validate.npy",
+        "scratch/prediction/X_test.npz",
+        "scratch/prediction/ym_test.npy",
+        "output/sockit/data/skills.csv",
+        Value(RANDOM_SEED)
+    ],
+    action="python $SOURCES $TARGETS >${TARGET}.log"
 )

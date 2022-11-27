@@ -4,3 +4,4 @@ output/
 scratch/
 *.gz
 Rplots.pdf
+__pycache__

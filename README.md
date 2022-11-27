@@ -24,6 +24,9 @@ etc. is governed by the terms and conditions which are available here:
 Please contact [connect@ripl.org](mailto:connect@ripl.org) to inquire about
 commercial use.
 
+The predictive modeling methods include code for the `auc_mu` metric licensed
+under [LICENSE_auc_mu.md](https://github.com/ripl-org/sockit-data/blob/main/LICENSE_auc_mu.md).
+
 ## Build Steps
 
 This tool uses the [scons](https://scons.org/) build system. The sequence of
