@@ -14,7 +14,7 @@ The methods are described in more detail in the manuscript:
 
 ## License
 
-Copyright 2022 Innovative Policy Lab d/b/a Research Improving People's Lives
+Copyright 2022-2023 Innovative Policy Lab d/b/a Research Improving People's Lives
 ("RIPL"), Providence, RI. All Rights Reserved.
 
 Your use of the Software License along with any related Documentation, Data,
@@ -32,7 +32,7 @@ build steps and intermediary files are described in the included
 
 First, install the python (>=3.10) build dependencies with:
 
-    pip install numpy pandas scipy scons sockit==0.3.0 sklearn zenodo-get
+    pip install numpy pandas scipy scons sockit==0.3.1 sklearn zenodo-get
 
 Next, install the R (>=4.2) plotting dependencies with:
 
