@@ -6,11 +6,12 @@ toolkit for modeling structured occupation information and Standard ccupational
 Classification (SOC) codes in unstructured text from job titles, job postings,
 and resumes.
 
-The methods are described in more detail in the manuscript:
+The methods are described in more detail in:
 
 > Nile Dixon, Marcelle Goggins, Ethan Ho, Mark Howison, Joe Long, Emma
-> Northcott, Karen Shen, Carrie Yeats. (2022). Occupational models from 42
-> million unstructured job postings.
+> Northcott, Karen Shen, Carrie Yeats. (2023). Occupational models from 42
+> million unstructured job postings. *Patterns*: 100757.
+> doi:[10.1016/j.patter.2023.100757](https://doi.org/10.1016/j.patter.2023.100757)
 
 ## License
 
